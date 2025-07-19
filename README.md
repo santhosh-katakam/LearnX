@@ -1,5 +1,5 @@
 ## 🚀 Live Demo
-[Visit the website](https://learnx-lms.netlify.app)
+[Visit the website](https://learnx-lms.netlify.app/)
 # 🎓 LearnX - Complete Learning Management System
 
 A comprehensive, full-stack Learning Management System featuring academic program management, video-based learning, interactive assessments, and student progress tracking.
