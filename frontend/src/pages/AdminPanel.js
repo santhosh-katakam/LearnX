@@ -10,6 +10,7 @@ const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('courses');
   const [studentDetails, setStudentDetails] = useState([]);
   const [progressData, setProgressData] = useState([]);
+  const [pdfs, setPdfs] = useState([]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -63,6 +64,13 @@ const AdminPanel = () => {
     })
       .then(res => setProgressData(res.data))
       .catch(err => console.error(err));
+
+    // Fetch PDFs
+    axios.get(`${API_BASE_URL}/pdfs`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => setPdfs(res.data))
+      .catch(err => console.error(err));
   }, [navigate]);
 
   const handleDeleteCourse = async (courseId) => {
@@ -86,6 +94,24 @@ const AdminPanel = () => {
   const handleEditCourse = (courseId) => {
     // Navigate to edit course page
     navigate(`/edit-course/${courseId}`);
+  };
+
+  const handleDeletePdf = async (pdfId) => {
+    if (!window.confirm('Are you sure you want to delete this PDF?')) {
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`${API_BASE_URL}/pdfs/${pdfId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPdfs(pdfs.filter(pdf => pdf._id !== pdfId));
+      alert('PDF deleted successfully!');
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.msg || 'Failed to delete PDF');
+    }
   };
 
   if (!user) return <div>Loading...</div>;
@@ -152,8 +178,13 @@ const AdminPanel = () => {
 
   return (
     <div style={containerStyle}>
-      <h2>Admin Panel</h2>
-      <p>Welcome, {user.name}! Manage your LMS system below.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div>
+          <h2>Admin Panel</h2>
+          <p>Welcome, {user.name}! Manage your LMS system below.</p>
+        </div>
+
+      </div>
 
       <div style={{ marginBottom: '20px' }}>
         <button
@@ -179,6 +210,12 @@ const AdminPanel = () => {
           onClick={() => setActiveTab('admin-data')}
         >
           Admin Data ({users.filter(u => u.role === 'admin').length} admins)
+        </button>
+        <button
+          style={activeTab === 'pdfs' ? activeTabStyle : tabStyle}
+          onClick={() => setActiveTab('pdfs')}
+        >
+          📄 Manage PDFs
         </button>
         <button
           style={tabStyle}
@@ -485,6 +522,103 @@ const AdminPanel = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {activeTab === 'pdfs' && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3>PDF Management</h3>
+            <button
+              style={createButtonStyle}
+              onClick={() => navigate('/create-pdf')}
+            >
+              Upload New PDF
+            </button>
+          </div>
+
+          {pdfs.length === 0 ? (
+            <div className="card" style={{ textAlign: 'center', padding: '3rem' }}>
+              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📄</div>
+              <h3 style={{ color: '#333', marginBottom: '1rem' }}>No PDFs uploaded yet</h3>
+              <p style={{ color: '#666', marginBottom: '2rem' }}>
+                Start building your PDF library by uploading educational resources.
+              </p>
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate('/create-pdf')}
+              >
+                Upload First PDF
+              </button>
+            </div>
+          ) : (
+            pdfs.map(pdf => (
+              <div key={pdf._id} style={cardStyle}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1 }}>
+                    <h4>{pdf.title}</h4>
+                    <p style={{ color: '#666', marginBottom: '0.5rem' }}>{pdf.description}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', fontSize: '14px', color: '#666' }}>
+                      <span>Category: {pdf.category}</span>
+                      <span>Subject: {pdf.subject}</span>
+                      <span>Pages: {pdf.pages || 'N/A'}</span>
+                      <span>Size: {pdf.fileSize}</span>
+                      <span>Views: {pdf.viewCount || pdf.downloadCount || 0}</span>
+                      <span>Status: {pdf.isActive ? 'Active' : 'Inactive'}</span>
+                    </div>
+                    {pdf.tags && pdf.tags.length > 0 && (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <strong>Tags: </strong>
+                        {pdf.tags.map((tag, index) => (
+                          <span
+                            key={index}
+                            style={{
+                              display: 'inline-block',
+                              background: 'rgba(102, 126, 234, 0.1)',
+                              color: '#667eea',
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '12px',
+                              fontSize: '0.8rem',
+                              marginRight: '0.5rem'
+                            }}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <button
+                      style={editButtonStyle}
+                      onClick={() => navigate(`/edit-pdf/${pdf._id}`)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      style={deleteButtonStyle}
+                      onClick={() => handleDeletePdf(pdf._id)}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      style={{
+                        ...buttonStyle,
+                        backgroundColor: '#17a2b8',
+                        color: 'white'
+                      }}
+                      onClick={() => {
+                        const fullPdfUrl = pdf.pdfUrl.startsWith('http') ? pdf.pdfUrl : `${API_BASE_URL}${pdf.pdfUrl}`;
+                        window.open(fullPdfUrl, '_blank');
+                      }}
+                    >
+                      👁️ View
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>

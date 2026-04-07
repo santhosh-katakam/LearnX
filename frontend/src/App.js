@@ -17,7 +17,13 @@ import CreateCourse from './pages/CreateCourse';
 import EditCourse from './pages/EditCourse';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
+import LandingPage from './pages/LandingPage';
+
+
 import Dashboard from './pages/Dashboard';
+import ExploreMore from './pages/ExploreMore';
+import CreatePDF from './pages/CreatePDF';
+import EditPDF from './pages/EditPDF';
 
 function App() {
   return (
@@ -40,7 +46,13 @@ function App() {
         <Route path="/edit-course/:courseId" element={<EditCourse />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/landing" element={<LandingPage />} />
+
+
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/explore-more" element={<ExploreMore />} />
+        <Route path="/create-pdf" element={<CreatePDF />} />
+        <Route path="/edit-pdf/:id" element={<EditPDF />} />
       </Routes>
     </Router>
   );

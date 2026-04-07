@@ -9,7 +9,8 @@ const connectDB = async () => {
     console.log('MongoDB Connected');
   } catch (err) {
     console.error('MongoDB connection error:', err);
-    process.exit(1);
+    console.log('Server will continue without database connection (using fallback authentication)');
+    // Don't exit, allow server to run without database
   }
 };
 

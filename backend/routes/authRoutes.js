@@ -10,13 +10,14 @@ router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
+    // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ msg: 'User already exists' });
     }
 
     // Determine role based on email
-    const isAdminEmail = email === 'admin@learnx.edu.in' || email.endsWith('@learnx.edu.in');
+    const isAdminEmail = email === 'admin@sru.edu.in' || email.endsWith('@sru.edu.in');
 
     user = new User({
       name,
@@ -42,8 +43,8 @@ router.post('/signup', async (req, res) => {
       }
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ msg: 'Server error' });
+    console.error('Signup error:', err);
+    res.status(500).json({ msg: 'Server error during registration' });
   }
 });
 
@@ -52,6 +53,28 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Check for hardcoded admin login first
+    if (email === 'admin@sru.edu.in' && password === 'admin123') {
+      // Try to find existing admin user first
+      let adminUser = await User.findOne({ email: 'admin@sru.edu.in' });
+
+      if (!adminUser) {
+        // Create admin user if doesn't exist
+        adminUser = new User({
+          name: 'Admin',
+          email: 'admin@sru.edu.in',
+          password: 'admin123', // This will be hashed by the pre-save middleware
+          role: 'admin'
+        });
+        await adminUser.save();
+      }
+
+      const payload = { user: { id: adminUser._id } };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+      return res.json({ token });
+    }
+
+    // Try to find user in database
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ msg: 'Invalid credentials' });
@@ -67,7 +90,7 @@ router.post('/login', async (req, res) => {
 
     res.json({ token });
   } catch (err) {
-    console.error(err);
+    console.error('Login error:', err);
     res.status(500).json({ msg: 'Server error' });
   }
 });
@@ -77,6 +100,7 @@ router.get('/me', async (req, res) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     const user = await User.findById(decoded.user.id).select('-password');
     if (!user) {
       return res.status(404).json({ msg: 'User not found' });

@@ -71,6 +71,11 @@ const Navigation = () => {
     backgroundColor: '#dc3545'
   };
 
+  // Hide navigation on landing page
+  if (location.pathname === '/landing') {
+    return null;
+  }
+
   return (
     <nav style={navStyle}>
       <div 

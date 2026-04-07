@@ -145,6 +145,14 @@ const Dashboard = () => {
           >
             👤 Profile
           </button>
+          <button
+            className="btn btn-outline"
+            onClick={() => navigate('/explore-more')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            📄 Explore more
+          </button>
+
         </div>
       </div>
 

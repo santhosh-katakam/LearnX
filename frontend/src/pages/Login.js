@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+
 import API_BASE_URL from '../config/api';
 
 const Login = () => {
-  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -28,8 +28,13 @@ const Login = () => {
         localStorage.setItem('token', res.data.token);
         alert('Login successful!');
 
-        // Force page reload to update navigation
-        window.location.href = '/dashboard';
+        // Redirect based on admin email type
+        if (formData.email === 'admin@sru.edu.in') {
+          window.location.href = '/admin';
+        } else {
+          // All users go to dashboard
+          window.location.href = '/dashboard';
+        }
       } else {
         throw new Error('No token received');
       }
