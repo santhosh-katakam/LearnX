@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { BASE_URL } from '../config/api';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -204,7 +204,7 @@ const Dashboard = () => {
                   <div style={{
                     width: '100%',
                     height: '200px',
-                    backgroundImage: `url(${progress.courseId.thumbnail})`,
+                    backgroundImage: `url(${progress.courseId.thumbnail.startsWith('http') ? progress.courseId.thumbnail : `${BASE_URL}${progress.courseId.thumbnail}`})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     borderRadius: '12px',

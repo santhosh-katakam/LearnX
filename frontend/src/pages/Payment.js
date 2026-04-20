@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { BASE_URL } from '../config/api';
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -361,7 +361,7 @@ const Payment = () => {
             <div style={{
               width: '100%',
               height: '150px',
-              backgroundImage: `url(${course.thumbnail})`,
+              backgroundImage: `url(${course.thumbnail.startsWith('http') ? course.thumbnail : `${BASE_URL}${course.thumbnail}`})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               borderRadius: '8px',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { BASE_URL } from '../config/api';
 
 const ExploreMore = () => {
   const [pdfs, setPdfs] = useState([]);
@@ -100,7 +100,7 @@ const ExploreMore = () => {
       });
 
       // Open PDF in new tab for viewing
-      const fullPdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${API_BASE_URL}${pdfUrl}`;
+      const fullPdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${BASE_URL}${pdfUrl}`;
       window.open(fullPdfUrl, '_blank');
     } catch (error) {
       console.error('Error viewing PDF:', error);

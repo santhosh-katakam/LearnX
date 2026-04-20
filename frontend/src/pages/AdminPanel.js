@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { BASE_URL } from '../config/api';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -608,7 +608,7 @@ const AdminPanel = () => {
                         color: 'white'
                       }}
                       onClick={() => {
-                        const fullPdfUrl = pdf.pdfUrl.startsWith('http') ? pdf.pdfUrl : `${API_BASE_URL}${pdf.pdfUrl}`;
+                        const fullPdfUrl = pdf.pdfUrl.startsWith('http') ? pdf.pdfUrl : `${BASE_URL}${pdf.pdfUrl}`;
                         window.open(fullPdfUrl, '_blank');
                       }}
                     >

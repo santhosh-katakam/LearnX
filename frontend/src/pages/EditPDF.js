@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import API_BASE_URL from '../config/api';
+import API_BASE_URL, { BASE_URL } from '../config/api';
 
 const EditPDF = () => {
   const [formData, setFormData] = useState({
@@ -271,7 +271,7 @@ const EditPDF = () => {
                       </span>
                       <button
                         type="button"
-                        onClick={() => window.open(formData.currentPdfUrl, '_blank')}
+                        onClick={() => window.open(formData.currentPdfUrl.startsWith('http') ? formData.currentPdfUrl : `${BASE_URL}${formData.currentPdfUrl}`, '_blank')}
                         style={{
                           padding: '0.25rem 0.75rem',
                           backgroundColor: '#17a2b8',
