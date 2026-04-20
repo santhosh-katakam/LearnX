@@ -38,6 +38,7 @@ const Signup = () => {
     }
 
     try {
+      console.log('API_BASE_URL being used:', API_BASE_URL);
       console.log('Attempting signup with:', formData);
       const res = await axios.post(`${API_BASE_URL}/auth/signup`, formData);
       console.log('Signup response:', res.data);
